@@ -42,7 +42,7 @@
     MenuItem.prototype = Object.create(Container.prototype);
     MenuItem.prototype.constructor = MenuItem;
     MenuItem.prototype.render = function () {
-      return "<li class='" + this.className + "' href='" + this.href + "'>" + this.itemName + "</li>";
+      return "<li class='" + this.className + "'><a href='" + this.href + "'>" + this.itemName + "</a></li>";
     }
     var m_item1 = new MenuItem("/", "Главная");
     var m_item2 = new MenuItem("/catalogue/", "Каталог");
