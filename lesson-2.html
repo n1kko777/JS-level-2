@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>eShop</title>
+  <script src="script.js" async></script>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      max-width: 1147px;
+      margin: 0 auto;
+    }
+    header {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+      border-bottom: 1px solid #000;
+      padding: 5px 10px;
+    }
+
+    .cart-button {
+      width: 80px;
+      height: 25px;
+      color: #fff;
+      border-radius: 5px;
+      background-color: #5766fb;
+      cursor: pointer;
+    }
+
+    .goods-list {
+      display: flex;
+      width: 90%;
+      justify-content: space-between;
+      margin: 10px auto;
+    }
+
+    .goods-item {
+      border: 1px solid #000;
+      width: 100px;
+      height: 150px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .cart {}
+    .cart-item {}
+    .cart-item-title {}
+    .cart-item-price {}
+  </style>
+</head>
+
+<body>
+  <header>
+    <button class="cart-button" type="button">Корзина</button>
+  </header>
+  <main>
+    <div class="goods-list"></div>
+  </main>
+</body>
+
+</html>
