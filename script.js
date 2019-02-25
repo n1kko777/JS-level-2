@@ -135,3 +135,6 @@ searchButton.addEventListener('click', (e) => {
 
   catalog.filterGoods(value);
 });
+
+// Ссылка на ДЗ
+// https://codepen.io/n1kko777/pen/pYovYj?editors=0010
