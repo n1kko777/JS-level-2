@@ -1,30 +1,29 @@
+console.clear();
 const API_URL = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
 
+function makeGETRequest(url) {
+  return new Promise((resolve, reject) => {
+    var xhr;
 
-const makeGETRequest = new Promise((resolve, reject) => {
-  let xhr,
-    url = `${API_URL}/catalogData.json`;
-
-  if (window.XMLHttpRequest) {
-    xhr = new XMLHttpRequest();
-  } else if (window.ActiveXObject) {
-    xhr = new ActiveXObject("Microsoft.XMLHTTP");
-  }
-
-  xhr.onreadystatechange = () => {
-    if (xhr.readyState === 4) {
-      resolve(xhr.responseText);
+    if (window.XMLHttpRequest) {
+      xhr = new XMLHttpRequest();
+    } else if (window.ActiveXObject) {
+      xhr = new ActiveXObject("Microsoft.XMLHTTP");
     }
-    /**else 
-    {
-      reject();
-    }
-     */
-  }
 
-  xhr.open('GET', url, true);
-  xhr.send();
-});
+    xhr.onreadystatechange = function () {
+      // console.log(xhr.readyState);
+      if (xhr.readyState === 4) {
+        if (xhr.status !== 200)
+          reject(xhr.responseText);
+        resolve(xhr.responseText);
+      }
+    }
+
+    xhr.open('GET', url, true);
+    xhr.send();
+  });
+}
 
 class GoodsItem {
   constructor(product_name, price) {
@@ -36,116 +35,103 @@ class GoodsItem {
   }
 }
 
-
 class GoodsList {
-  constructor() {
+  constructor(source = '') {
     this.goods = [];
+    this.source = source;
+    this.listHtml = '';
+    this.filteredGoods = [];
   }
-  fetchGoods(cb) {
 
-    // не понял как реализовать reject, то есть как отловить ошибку
-    makeGETRequest
-      .then((goods) => {
-        this.goods.push(...JSON.parse(goods));
-        cb();
+  filterGoods(value) {
+    // Здесь будем фильтровать список товаров
+    const regexp = new RegExp(value, 'i');
+    this.filteredGoods = this.goods.filter(good => regexp.test(good.product_name));
+    this.render();
+  }
+
+  applyData(jsonData) {
+    console.log(jsonData);
+  }
+
+  fetchGoods() {
+    makeGETRequest(`${API_URL}/${this.source}`)
+      .then((response) => {
+        this.applyData(JSON.parse(response));
+        this.render();
       })
-    /**.catch((error) => {
-      // this.goods = JSON.parse(goods);
-      console.log(error);
-      
-      
-      cb();
-    }) */
-    ;
+      .catch((response) => {
+        console.log(response);
+      })
   }
-  render() {
-    let listHtml = '';
-    this.goods.forEach(good => {
-      const goodItem = new GoodsItem(good.product_name, good.price);
+  render() {}
+}
 
-      listHtml += goodItem.render();
-    });
-    document.querySelector('.goods-list').innerHTML = listHtml;
+class Catalog extends GoodsList {
+  constructor() {
+    super('catalogData.json');
   }
 
-  total() {
+  calculateTotalPrice() {
     let totalPrice = 0;
-
     this.goods.forEach(good => {
       totalPrice += good.price;
     });
     return totalPrice;
   }
 
-  remove(product_id) {
-    this.goods.forEach((good) => {
-      if (good.id_product === product_id) {
-        console.log(good);
-      }
-    });;
-  }
-}
-
-const list = new GoodsList();
-list.fetchGoods(() => {
-  list.render();
-  console.log(list.total());
-});
-
-// cart
-const cart = [];
-
-class AddToCart {
-  constructor(id_product, product_name, price) {
-    this.id_product = id_product;
-    this.product_name = product_name;
-    this.price = price;
+  applyData(jsonData) {
+    this.goods = jsonData;
+    this.filteredGoods = this.goods;
+    // console.log(this.filteredGoods);
   }
 
-  addItem() {
-    const goodItem = {
-      id_product: this.id_product,
-      product_name: this.product_name,
-      price: this.price
-    };
-    cart.push(goodItem);
-  }
-
-}
-
-class RemoveFromCart {
-  constructor(id_product) {
-    this.id_product = id_product;
-  }
-
-  removeItem() {
-    cart.forEach((item) => {
-      if (item.id_product === this.id_product) {
-        cart.splice(cart.indexOf(item), 1);
-      }
+  render() {
+    document.querySelector('.goods-list').innerHTML = '';
+    this.listHtml = '';
+    this.filteredGoods.forEach(good => {
+      const goodItem = new GoodsItem(good.product_name, good.price);
+      this.listHtml += goodItem.render();
     });
+    document.querySelector('.goods-list').innerHTML = this.listHtml;
   }
 }
 
-class GetAllFromCart {
-  constructor() {}
+class Basket extends GoodsList {
+  constructor() {
+    super('getBasket.json');
+    this.totalPrice = 0;
+    this.countGoods = 0;
+  }
 
-  getItems() {
-    cart.forEach(item => console.log(item));
+  applyData(jsonData) {
+    this.goods = jsonData.contents;
+    this.totalPrice = jsonData.amount;
+    this.countGoods = jsonData.countGoods;
+  }
+
+  render() {
+    this.goods.forEach(good => {
+      const goodItem = new GoodsItem(good.product_name, good.price);
+      this.listHtml += goodItem.render();
+    });
+    this.listHtml += `<div class='basket-price'>${this.totalPrice}</div>`;
+    this.listHtml += `<div class='basket-count'>${this.countGoods}</div>`;
+    document.querySelector('.basket-list').innerHTML = this.listHtml;
   }
 }
 
-let addToCart = new AddToCart(234, "Монитор", 10000);
+const catalog = new Catalog();
+const basket = new Basket();
+catalog.fetchGoods();
+basket.fetchGoods();
 
-addToCart.addItem();
 
-console.log(cart);
+const searchButton = document.querySelector('.search-button'),
+  searchInput = document.querySelector('.goods-search');
 
-let removeFromCart = new RemoveFromCart(236);
+searchButton.addEventListener('click', (e) => {
+  const value = searchInput.value;
 
-removeFromCart.removeItem();
-
-console.log(cart);
-
-let getAllFromCart = new GetAllFromCart();
-getAllFromCart.getItems();
+  catalog.filterGoods(value);
+});

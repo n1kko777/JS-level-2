@@ -5,60 +5,34 @@
   <title>eShop</title>
   <script src="script.js" async></script>
   <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-    }
     body {
       max-width: 1147px;
-      margin: 0 auto;
+      margin: 20px auto;
     }
-    header {
+    .goods-list, .basket-list  {
       display: flex;
-      flex-direction: row;
-      justify-content: flex-end;
-      border-bottom: 1px solid #000;
-      padding: 5px 10px;
-    }
-
-    .cart-button {
-      width: 80px;
-      height: 25px;
-      color: #fff;
-      border-radius: 5px;
-      background-color: #5766fb;
-      cursor: pointer;
-    }
-
-    .goods-list {
-      display: flex;
-      width: 90%;
+      border: 1px solid #333;
       justify-content: space-between;
-      margin: 10px auto;
     }
 
     .goods-item {
-      border: 1px solid #000;
-      width: 100px;
-      height: 150px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+      border: 1px solid green;
+      margin: 20px;
+      padding: 20px;
     }
-
-    .cart {}
-    .cart-item {}
-    .cart-item-title {}
-    .cart-item-price {}
   </style>
 </head>
 
 <body>
   <header>
+    <input type="text" class="goods-search" />
+    <button class="search-button" type="button">Искать</button>
     <button class="cart-button" type="button">Корзина</button>
   </header>
   <main>
+    <h2>Корзина</h2>
+    <div class="basket-list"></div>
+    <h2>Каталог</h2>
     <div class="goods-list"></div>
   </main>
 </body>
