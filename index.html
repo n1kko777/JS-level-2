@@ -3,7 +3,7 @@
 
 <head>
   <title>eShop</title>
-  <script src="script.js" async></script>
+
   <style>
     .goods-list, .basket-list  {
       display: flex;
@@ -22,21 +22,41 @@
       margin: 20px;
       padding: 20px;
     }
+
+    .empty {
+      padding-left: 30px;
+    }
   </style>
 </head>
 
 <body>
-  <header>
-    <input type="text" class="goods-search" />
-    <button class="search-button" type="button">Искать</button>
-    <button class="cart-button" type="button">Корзина</button>
-  </header>
-  <main>
-    <h2>Корзина</h2>
-    <div class="basket-list"></div>
-    <h2>Каталог</h2>
-    <div class="goods-list"></div>
-  </main>
+  <div id="app">
+    <header>
+      <input v-model="searchLine" type="text" class="goods-search" />
+      <button v-on:click="filterGoods(searchLine)" class="search-button" type="button">Искать</button>
+      <button v-on:click="emptyBasket = !emptyBasket" class="cart-button" type="button">Корзина</button>
+    </header>
+    <main>
+      <div v-if="!emptyBasket" class="basket">
+        <h2>Корзина</h2>
+        <div class="basket-list">
+          <p v-if="countGoods == 0" class="empty">Корзина пуста!</p>
+        </div>
+      </div>
+      <div class="catalog">
+        <h2>Каталог</h2>
+        <div class="goods-list">
+          <p v-if="goods.length == 0" class="empty">Нет данных</p>
+          <div class="goods-item" v-for="good in filteredGoods">
+            <h3>{{ good.product_name }}</h3>
+            <p>{{ good.price }}</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.7/vue.min.js"></script>
+  <script src="script.js"></script>
 </body>
 
 </html>
