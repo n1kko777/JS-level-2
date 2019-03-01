@@ -5,14 +5,16 @@
   <title>eShop</title>
   <script src="script.js" async></script>
   <style>
-    body {
-      max-width: 1147px;
-      margin: 20px auto;
-    }
     .goods-list, .basket-list  {
       display: flex;
+      flex-wrap: wrap;
       border: 1px solid #333;
       justify-content: space-between;
+    }
+
+    .basket-price, .basket-count {
+      flex: 0 0 100%;
+      text-align: center;
     }
 
     .goods-item {

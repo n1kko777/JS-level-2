@@ -12,7 +12,6 @@ function makeGETRequest(url) {
     }
 
     xhr.onreadystatechange = function () {
-      // console.log(xhr.readyState);
       if (xhr.readyState === 4) {
         if (xhr.status !== 200)
           reject(xhr.responseText);
@@ -43,6 +42,8 @@ class GoodsList {
     this.filteredGoods = [];
   }
 
+  applyData(jsonData) {}
+
   filterGoods(value) {
     // Здесь будем фильтровать список товаров
     const regexp = new RegExp(value, 'i');
@@ -50,19 +51,13 @@ class GoodsList {
     this.render();
   }
 
-  applyData(jsonData) {
-    console.log(jsonData);
-  }
-
   fetchGoods() {
-    makeGETRequest(`${API_URL}/${this.source}`)
+    return makeGETRequest(`${API_URL}/${this.source}`)
       .then((response) => {
         this.applyData(JSON.parse(response));
         this.render();
       })
-      .catch((response) => {
-        console.log(response);
-      })
+      .catch((response) => {})
   }
   render() {}
 }
@@ -83,11 +78,9 @@ class Catalog extends GoodsList {
   applyData(jsonData) {
     this.goods = jsonData;
     this.filteredGoods = this.goods;
-    // console.log(this.filteredGoods);
   }
 
   render() {
-    document.querySelector('.goods-list').innerHTML = '';
     this.listHtml = '';
     this.filteredGoods.forEach(good => {
       const goodItem = new GoodsItem(good.product_name, good.price);
@@ -108,15 +101,28 @@ class Basket extends GoodsList {
     this.goods = jsonData.contents;
     this.totalPrice = jsonData.amount;
     this.countGoods = jsonData.countGoods;
+    this.filteredGoods = this.goods;
+  }
+
+  addGood(goodItem) {
+    this.goods.push(goodItem);
+    this.render();
+  }
+
+  deleteGood(goodId) {
+    const indexToDelete = this.goods.findIndex((item) => item.id_product === goodId);
+    this.goods.splice(indexToDelete, 1);
+    this.render();
   }
 
   render() {
-    this.goods.forEach(good => {
+    this.listHtml = '';
+    this.filteredGoods.forEach(good => {
       const goodItem = new GoodsItem(good.product_name, good.price);
       this.listHtml += goodItem.render();
     });
-    this.listHtml += `<div class='basket-price'>${this.totalPrice}</div>`;
-    this.listHtml += `<div class='basket-count'>${this.countGoods}</div>`;
+    this.listHtml += `<div class='basket-price'>Сумма корзины: ${this.totalPrice}</div>`;
+    this.listHtml += `<div class='basket-count'>Кол-во товаров: ${this.countGoods}</div>`;
     document.querySelector('.basket-list').innerHTML = this.listHtml;
   }
 }
@@ -124,8 +130,22 @@ class Basket extends GoodsList {
 const catalog = new Catalog();
 const basket = new Basket();
 catalog.fetchGoods();
-basket.fetchGoods();
-
+basket.fetchGoods()
+  .then(() => {
+    basket.addGood({
+      id_product: 453,
+      price: 12000,
+      product_name: "Шлепки",
+      quantity: 1,
+    });
+    basket.addGood({
+      id_product: 998,
+      price: 11000,
+      product_name: "Тапки",
+      quantity: 1,
+    });
+    basket.deleteGood(456);
+  });
 
 const searchButton = document.querySelector('.search-button'),
   searchInput = document.querySelector('.goods-search');
