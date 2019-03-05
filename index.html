@@ -5,14 +5,16 @@
   <title>eShop</title>
 
   <style>
-    .goods-list, .basket-list  {
+    .goods-list,
+    .basket-list {
       display: flex;
       flex-wrap: wrap;
       border: 1px solid #333;
       justify-content: space-between;
     }
 
-    .basket-price, .basket-count {
+    .basket-price,
+    .basket-count {
       flex: 0 0 100%;
       text-align: center;
     }
@@ -26,32 +28,29 @@
     .empty {
       padding-left: 30px;
     }
+
+    .search {
+      display: inline-block;
+    }
   </style>
 </head>
 
 <body>
+
   <div id="app">
     <header>
-      <input v-model="searchLine" type="text" class="goods-search" />
-      <button v-on:click="filterGoods(searchLine)" class="search-button" type="button">Искать</button>
-      <button v-on:click="emptyBasket = !emptyBasket" class="cart-button" type="button">Корзина</button>
+      <goods-search></goods-search>
+      
+      <button v-on:click="isVisible = !isVisible" class="cart-button" type="button">Корзина</button>
     </header>
     <main>
-      <div v-if="!emptyBasket" class="basket">
+      <div v-if="!isVisible" class="basket">
         <h2>Корзина</h2>
-        <div class="basket-list">
-          <p v-if="countGoods == 0" class="empty">Корзина пуста!</p>
-        </div>
+        <basket-list></basket-list>
       </div>
       <div class="catalog">
         <h2>Каталог</h2>
-        <div class="goods-list">
-          <p v-if="goods.length == 0" class="empty">Нет данных</p>
-          <div class="goods-item" v-for="good in filteredGoods">
-            <h3>{{ good.product_name }}</h3>
-            <p>{{ good.price }}</p>
-          </div>
-        </div>
+        <goods-list :goods="filteredGoods"></goods-list>
       </div>
     </main>
   </div>
