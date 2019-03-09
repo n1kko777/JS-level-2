@@ -6,27 +6,24 @@
 
   <style>
     .goods-list,
-    .basket-list {
+    .cart-list {
+      margin-top: 15px;
       display: flex;
       flex-wrap: wrap;
       border: 1px solid #333;
       justify-content: space-between;
     }
 
-    .basket-price,
-    .basket-count {
+    .cart-price {
       flex: 0 0 100%;
       text-align: center;
     }
 
-    .goods-item {
+    .goods-item,
+    .cart-item {
       border: 1px solid green;
       margin: 20px;
       padding: 20px;
-    }
-
-    .empty {
-      padding-left: 30px;
     }
 
     .search {
@@ -39,21 +36,25 @@
 
   <div id="app">
     <header>
-      <goods-search></goods-search>
-      
-      <button v-on:click="isVisible = !isVisible" class="cart-button" type="button">Корзина</button>
+      <search></search>
+      <button class="cart-button" type="button" @click="isVisibleCart = !isVisibleCart">Корзина</button>
     </header>
     <main>
-      <div v-if="!isVisible" class="basket">
-        <h2>Корзина</h2>
-        <basket-list></basket-list>
+
+      <h3 v-if="serverError">Нет соединения с сервером</h3>
+
+      <div v-if="isVisibleCart" class="cart">
+        <h3>Корзина</h3>
+        <cart-list :cart="cart"></cart-list>
       </div>
-      <div class="catalog">
-        <h2>Каталог</h2>
-        <goods-list :goods="filteredGoods"></goods-list>
-      </div>
+
+      <p v-if="isNoHaveData || filteredGoods.length == 0">Нет данных</p>
+
+      <goods-list v-if="!isNoHaveData" :goods="filteredGoods"></goods-list>
+
     </main>
   </div>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.7/vue.min.js"></script>
   <script src="script.js"></script>
 </body>
