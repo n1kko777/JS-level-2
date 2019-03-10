@@ -1,7 +1,6 @@
-console.clear();
-
-let productId = 1000;
+let productId = 100;
 const API_URL = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
+const API_LOCAL = 'http://127.0.0.1:3000'
 
 Vue.component('goods-list', {
   props: ['goods'],
@@ -61,6 +60,7 @@ const app = new Vue({
     searchLine: '',
     isVisibleCart: false,
     isNoHaveData: true,
+    isNoHaveDataCart: true,
     serverError: false
   },
   methods: {
@@ -74,11 +74,13 @@ const app = new Vue({
           xhr = new ActiveXObject("Microsoft.XMLHTTP");
         }
 
-        xhr.onreadystatechange = function () {
+        xhr.onreadystatechange = () => {
           if (xhr.readyState === 4) {
-            if (xhr.status !== 200)
+            if (xhr.status !== 200) {
               reject(xhr.responseText);
-            resolve(xhr.responseText);
+            } else {
+              resolve(xhr.responseText);
+            }
           }
         };
 
@@ -86,16 +88,60 @@ const app = new Vue({
         xhr.send();
       });
     },
+    makePOSTRequest(url, name, price, productId) {
+      return new Promise((resolve, reject) => {
+        let xhr;
+
+        if (window.XMLHttpRequest) {
+          xhr = new XMLHttpRequest();
+        } else if (window.ActiveXObject) {
+          xhr = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+
+        const body = {
+          'product_name': name,
+          'price': price
+        };
+
+
+        xhr.onreadystatechange = () => {
+          // resolve()
+          if (xhr.readyState === 4) {
+            if (xhr.status !== 200) {
+              console.log(xhr, "error");
+            } else {
+              console.log(xhr, "done");
+            }
+          }
+
+
+        };
+
+        console.log(body);
+
+
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhr.send(body);
+      });
+    },
     deleteFromCart(id) {
-      const idx = this.cart.findIndex((el) => el.id_product === id);
-      this.cart.splice(idx, 1);
+
+      // const idx = this.cart.findIndex((el) => el.id_product === id);
+      // this.cart.splice(idx, 1);
     },
     addToCart(name, price) {
-      this.cart.push({
-        id_product: productId++,
-        product_name: name,
-        price: +price
-      });
+      this.makePOSTRequest(`${API_LOCAL}/addToCart`, name, price, productId++)
+        .then(() => {
+          this.cart.push({
+            id_product: productId,
+            product_name: name,
+            price: price
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
     filterGoods() {
       if (this.searchLine === 0) {
@@ -107,24 +153,43 @@ const app = new Vue({
     }
   },
   mounted() {
-    this.makeGETRequest(`${API_URL}/catalogData.json`)
+    this.makeGETRequest(`${API_LOCAL}/catalogData`)
       .then((goods) => {
         this.goods = JSON.parse(goods);
         this.filteredGoods = JSON.parse(goods);
+        if (this.filteredGoods.length == 0) {
+          this.isNoHaveData = true;
+        }
       })
       .then(this.isNoHaveData = false)
       .catch(() => {
+        if (this.filteredGoods.length == 0) {
+          this.isNoHaveData = true;
+        } else {
+          this.serverError = true;
+          console.log('Нет соединения с сервером');
+        }
         this.isNoHaveData = true;
         this.serverError = true;
         console.log('Нет соединения с сервером');
       })
-    this.makeGETRequest(`${API_URL}/getBasket.json`)
+    this.makeGETRequest(`${API_LOCAL}/getBasket`)
       .then((cart) => {
-        this.cart = JSON.parse(cart).contents;
+        this.cart = JSON.parse(cart)[0].contents;
+        if (this.cart.length == 0) {
+          this.isNoHaveDataCart = true;
+        }
       })
+      .then(this.isNoHaveDataCart = false)
       .catch(() => {
-        this.serverError = true;
-        console.log('Нет соединения с сервером');
+        if (this.cart === undefined) {
+          this.serverError = true;
+          console.log('Нет соединения с сервером');
+        } else {
+          if (this.cart.length == 0) {
+            this.isNoHaveDataCart = true;
+          }
+        }
       });
   }
 });
