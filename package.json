@@ -1,0 +1,24 @@
+{
+  "name": "js-level-2",
+  "version": "1.0.0",
+  "description": "Geekbrains JS-2",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/n1kko777/JS-level-2.git"
+  },
+  "author": "n1kko777",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/n1kko777/JS-level-2/issues"
+  },
+  "homepage": "https://github.com/n1kko777/JS-level-2#readme",
+  "dependencies": {
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.2.3"
+  }
+}
