@@ -4,7 +4,7 @@ const goodItem = Vue.component('goods-item', {
     <div class="goods-item">
       <h3>{{ good.product_name }}</h3>
       <p>{{ good.price }}</p>
-      <button type="button" @click="app.addToCart()">В корзину</button>
+      <button @click="$emit('add-item')" type="button">В корзину</button>
     </div>
   `
 });

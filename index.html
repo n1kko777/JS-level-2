@@ -53,7 +53,8 @@
 
       <h3>Каталог</h3>
       <p v-if="isNoHaveData || typeof filteredGoods == undefined">Нет данных</p>
-      <goods-list v-if="!isNoHaveData" :goods="filteredGoods"></goods-list>
+      <goods-list v-if="!isNoHaveData" :goods="filteredGoods" :cart="cart">
+      </goods-list>
 
     </main>
   </div>

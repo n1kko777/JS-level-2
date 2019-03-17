@@ -1,6 +1,6 @@
 let productId = 100;
 const API_URL = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
-const API_LOCAL = 'http://127.0.0.1:3000'
+const API_LOCAL = 'http://127.0.0.1:3000';
 
 const app = new Vue({
   el: '#app',
@@ -49,39 +49,6 @@ const app = new Vue({
           body: JSON.stringify({
             id: goodId,
           })
-        })
-        .then(response => response.json())
-        .then(json => {
-          if (json.result == 1) {
-            makeGETRequest(`${API_LOCAL}/getBasket`)
-              .then((cart) => {
-                this.cart = JSON.parse(cart)[0].contents;
-                if (this.cart.length == 0) {
-                  this.isNoHaveDataCart = true;
-                }
-              })
-              .then(this.isNoHaveDataCart = false)
-              .catch(() => {
-                if (this.cart === undefined) {
-                  this.serverError = true;
-                  console.log('Нет соединения с сервером');
-                } else {
-                  if (this.cart.length == 0) {
-                    this.isNoHaveDataCart = true;
-                  }
-                }
-              });
-          }
-        });
-    },
-    addToCart() {
-      const getData = this.goods.filter((good) => good.id_product == event.target.id);
-      fetch(`${API_LOCAL}/addToCart`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(getData[0])
         })
         .then(response => response.json())
         .then(json => {
@@ -157,5 +124,7 @@ const app = new Vue({
       });
   }
 });
+
+// app.addToCart();
 
 module.exports = app;
