@@ -3,38 +3,64 @@
 
 <head>
   <title>eShop</title>
-  <script src="script.js" async></script>
+
   <style>
-    body {
-      max-width: 1147px;
-      margin: 20px auto;
-    }
-    .goods-list, .basket-list  {
+    .goods-list,
+    .cart-list {
+      margin-top: 15px;
       display: flex;
+      flex-wrap: wrap;
       border: 1px solid #333;
       justify-content: space-between;
     }
 
-    .goods-item {
+    .cart-price {
+      flex: 0 0 100%;
+      text-align: center;
+    }
+
+    .goods-item,
+    .cart-item {
       border: 1px solid green;
       margin: 20px;
       padding: 20px;
+    }
+
+    .search {
+      display: inline-block;
     }
   </style>
 </head>
 
 <body>
-  <header>
-    <input type="text" class="goods-search" />
-    <button class="search-button" type="button">Искать</button>
-    <button class="cart-button" type="button">Корзина</button>
-  </header>
-  <main>
-    <h2>Корзина</h2>
-    <div class="basket-list"></div>
-    <h2>Каталог</h2>
-    <div class="goods-list"></div>
-  </main>
+
+  <div id="app">
+    <header>
+      <search></search>
+      <button class="cart-button" type="button" @click="isVisibleCart = !isVisibleCart">Корзина</button>
+    </header>
+    <main>
+
+      <h3 v-if="serverError">Нет соединения с сервером</h3>
+
+      <div v-if="isVisibleCart" class="cart">
+        <h3>Корзина</h3>
+
+        <p v-if="isNoHaveDataCart || typeof cart == undefined">Нет данных</p>
+        <cart-list v-if="!isNoHaveDataCart" :cart="cart"></cart-list>
+      </div>
+
+
+      <h3>Каталог</h3>
+      <p v-if="isNoHaveData || typeof filteredGoods == undefined">Нет данных</p>
+      <goods-list v-if="!isNoHaveData" :goods="filteredGoods" :cart="cart">
+      </goods-list>
+
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.7/vue.min.js"></script>
+  <script src="dist/build.js"></script>
 </body>
 
 </html>
