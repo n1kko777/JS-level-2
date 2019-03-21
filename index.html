@@ -45,11 +45,14 @@
 
       <div v-if="isVisibleCart" class="cart">
         <h3>Корзина</h3>
-        <cart-list :cart="cart"></cart-list>
+
+        <p v-if="isNoHaveDataCart || typeof cart == undefined">Нет данных</p>
+        <cart-list v-if="!isNoHaveDataCart" :cart="cart"></cart-list>
       </div>
 
-      <p v-if="isNoHaveData || filteredGoods.length == 0">Нет данных</p>
 
+      <h3>Каталог</h3>
+      <p v-if="isNoHaveData || typeof filteredGoods == undefined">Нет данных</p>
       <goods-list v-if="!isNoHaveData" :goods="filteredGoods"></goods-list>
 
     </main>
