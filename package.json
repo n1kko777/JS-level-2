@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/n1kko777/JS-level-2#readme",
   "dependencies": {
-    "webpack": "^4.29.6",
-    "webpack-cli": "^3.2.3"
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
   }
 }
